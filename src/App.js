@@ -143,7 +143,7 @@ class App extends Component {
             route === 'signin' 
             ? <div>
                 <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
-                <h4>You can use <b>charlie@gmail.com</b>, password: <b>1234</b> to access to my application</h4>
+                <h4>You can use <b>charlie@gmail.com</b>, password: <b>123</b> to access to my application</h4>
               </div>
             : <SignUp loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
           )
