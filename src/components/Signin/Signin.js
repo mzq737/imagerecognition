@@ -74,7 +74,7 @@ class Signin extends React.Component {
               <p onClick={() => onRouteChange('signup')} className="f6 link dim black db underline">Sign Up Here!</p>
             </div>
         </main>
-      </article>
+      </article>    
     );
   }
 }
