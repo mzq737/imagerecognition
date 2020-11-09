@@ -1,11 +1,15 @@
 import React from 'react';
+import LoadingSpinner from '../LoadingSpinner/loadingspinner';
+import ErrorMessage from '../ErrorMessage/errormessage';
 
 class Signin extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       signInEmail: '',
-      signInPassword: ''
+      signInPassword: '',
+      isLoading: false,
+      displayError: false
     }
   }
 
@@ -17,7 +21,14 @@ class Signin extends React.Component {
     this.setState({signInPassword: event.target.value})
   }
 
+  handleKeyPress = event => {
+		if (event.key === 'Enter') {
+			this.onSubmitSignIn();
+		}
+  }
+  
   onSubmitSignIn = () => {
+    this.setState({isLoading: true}, () => {
     fetch('https://quiet-savannah-29855.herokuapp.com/signin', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
@@ -31,7 +42,13 @@ class Signin extends React.Component {
         if (user.id) {
           this.props.loadUser(user);
           this.props.onRouteChange('home');
-      }
+        } else {
+          this.setState({ isLoading: false, displayError: true });
+        }
+      })
+      .catch(err => {
+        this.setState({ isLoading: false, displayError: true });
+      })
     })
   }
 
@@ -45,7 +62,8 @@ class Signin extends React.Component {
               <div className="mt3">
                 <label className="db fw6 lh-copy f6" htmlFor="email-address">Email</label>
                 <input 
-                  onChange={this.onEmailChange} 
+                  onChange={this.onEmailChange}
+                  onKeyPress={this.handleKeyPress} 
                   className="b pa2 input-reset ba bg-transparent" 
                   type="email" 
                   name="email-address"  
@@ -62,17 +80,24 @@ class Signin extends React.Component {
                   id="password" />
               </div>
             </fieldset>
-            <div className="">
-              <input 
-                onClick={this.onSubmitSignIn}
-                className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
-                type="submit" 
-                value="Sign in" 
-              />
-            </div>
-            <div className="lh-copy mt3">
-              <p onClick={() => onRouteChange('signup')} className="f6 link dim black db underline">Sign Up Here!</p>
-            </div>
+            {this.state.isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <div>
+                <div className="">
+                  <input 
+                    onClick={this.onSubmitSignIn}
+                    className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
+                    type="submit" 
+                    value="Sign in" 
+                  />
+                </div>
+                <div className="lh-copy mt3">
+                  <p onClick={() => onRouteChange('signup')} className="f6 link dim black db underline">Sign Up Here!</p>
+                </div>
+              </div>
+            )}
+            {this.state.displayError ? <ErrorMessage /> : false}
         </main>
       </article>    
     );
